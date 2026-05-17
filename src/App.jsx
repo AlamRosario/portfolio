@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import profileImg from './assets/profile.png';
 
 const SKILLS = {
   Frontend: ["React", "Vite", "Tailwind CSS", "JavaScript ES6+", "HTML5 / CSS3"],
@@ -16,152 +17,160 @@ const CERTS = [
 
 export default function Portfolio() {
   const [dark, setDark] = useState(false);
-  const [active, setActive] = useState("Inicio");
   const [menuOpen, setMenuOpen] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
   const [sent, setSent] = useState(false);
 
-  useEffect(() => {
-    document.documentElement.style.setProperty("color-scheme", dark ? "dark" : "light");
-  }, [dark]);
-
-  const theme = {
+  const t = {
     bg: dark ? "#0f0f13" : "#f7f6f2",
     bgCard: dark ? "#18181f" : "#ffffff",
+    bgAlt: dark ? "#0c0c10" : "#eeecea",
     bgCardAlt: dark ? "#1e1e28" : "#f0efe9",
     border: dark ? "#2a2a38" : "#e0ddd6",
     text: dark ? "#e8e6df" : "#1a1916",
-    textMuted: dark ? "#7a7870" : "#7a7568",
+    muted: dark ? "#7a7870" : "#7a7568",
     accent: "#2563eb",
     accentSoft: dark ? "#1d3461" : "#dbeafe",
     accentText: dark ? "#93c5fd" : "#1d4ed8",
-    navBg: dark ? "rgba(15,15,19,0.92)" : "rgba(247,246,242,0.92)",
+    nav: dark ? "rgba(15,15,19,0.95)" : "rgba(247,246,242,0.95)",
   };
 
   const scrollTo = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-    setActive(id);
     setMenuOpen(false);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!formData.name || !formData.email || !formData.message) return;
-    setSent(true);
+    try {
+      const response = await fetch("https://formspree.io/f/mojyawvy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(formData)
+      });
+      if (response.ok) setSent(true);
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   return (
-    <div style={{ background: theme.bg, color: theme.text, fontFamily: "'DM Sans', sans-serif", minHeight: "100vh", transition: "all 0.3s ease" }}>
+    <div style={{ background: t.bg, color: t.text, fontFamily: "'DM Sans', sans-serif", minHeight: "100vh", overflowX: "hidden", width: "100%" }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&family=Syne:wght@600;700;800&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; }
-        ::selection { background: #2563eb33; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #2563eb55; border-radius: 3px; }
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Syne:wght@700;800&display=swap');
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { overflow-x: hidden; width: 100%; }
 
-        .nav-link { cursor: pointer; font-size: 0.875rem; font-weight: 500; letter-spacing: 0.02em; padding: 0.4rem 0; position: relative; transition: color 0.2s; }
-        .nav-link::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 1.5px; background: #2563eb; transition: width 0.25s ease; }
-        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+        .syne { font-family: 'Syne', sans-serif; }
 
-        .skill-tag { display: inline-flex; align-items: center; padding: 0.3rem 0.75rem; border-radius: 999px; font-size: 0.8rem; font-weight: 500; transition: transform 0.15s, box-shadow 0.15s; cursor: default; }
-        .skill-tag:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37,99,235,0.25); }
+        .btn-p { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; background: #2563eb; color: #fff; border: none; border-radius: 10px; padding: .7rem 1.4rem; font-size: .9rem; font-weight: 600; cursor: pointer; transition: background .2s, transform .15s; font-family: inherit; }
+        .btn-p:hover { background: #1d4ed8; transform: translateY(-2px); }
+        .btn-o { display: inline-flex; align-items: center; justify-content: center; gap: .5rem; background: transparent; border: 1.5px solid #2563eb; color: #2563eb; border-radius: 10px; padding: .7rem 1.4rem; font-size: .9rem; font-weight: 600; cursor: pointer; transition: all .2s; font-family: inherit; }
+        .btn-o:hover { background: #2563eb; color: #fff; }
 
-        .card { border-radius: 16px; transition: transform 0.2s, box-shadow 0.2s; }
-        .card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.12); }
+        .tag { display: inline-flex; align-items: center; padding: .28rem .7rem; border-radius: 999px; font-size: .78rem; font-weight: 500; }
 
-        .hero-name { font-family: 'Syne', sans-serif; font-weight: 800; line-height: 1.05; letter-spacing: -0.03em; }
+        .card { border-radius: 16px; transition: transform .2s, box-shadow .2s; }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,.1); }
 
-        .btn-primary { display: inline-flex; align-items: center; gap: 0.5rem; background: #2563eb; color: white; border: none; border-radius: 10px; padding: 0.75rem 1.5rem; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background 0.2s, transform 0.15s, box-shadow 0.2s; font-family: inherit; }
-        .btn-primary:hover { background: #1d4ed8; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(37,99,235,0.35); }
+        .input { width: 100%; padding: .75rem 1rem; border-radius: 10px; font-family: inherit; font-size: .9rem; outline: none; transition: border-color .2s, box-shadow .2s; }
+        .input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.15); }
 
-        .btn-outline { display: inline-flex; align-items: center; gap: 0.5rem; background: transparent; border: 1.5px solid #2563eb; color: #2563eb; border-radius: 10px; padding: 0.75rem 1.5rem; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: inherit; }
-        .btn-outline:hover { background: #2563eb; color: white; transform: translateY(-2px); }
+        .label { font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #2563eb; margin-bottom: .4rem; display: block; }
 
-        .input-field { width: 100%; padding: 0.75rem 1rem; border-radius: 10px; font-family: inherit; font-size: 0.9rem; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
-        .input-field:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
+        /* NAV */
+        nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 1.25rem; border-bottom-width: 1px; border-bottom-style: solid; backdrop-filter: blur(12px); transition: all .3s; }
+        .nav-links { display: flex; gap: 1.75rem; align-items: center; }
+        .nav-link { font-size: .85rem; font-weight: 500; cursor: pointer; transition: color .2s; }
 
-        .toggle-btn { width: 48px; height: 26px; border-radius: 999px; border: none; cursor: pointer; position: relative; transition: background 0.3s; }
-        .toggle-thumb { position: absolute; top: 3px; width: 20px; height: 20px; border-radius: 50%; background: white; transition: left 0.3s; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
+        /* SECTIONS */
+        section { width: 100%; overflow-x: hidden; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 1.25rem; width: 100%; }
 
-        .section-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #2563eb; margin-bottom: 0.5rem; }
-        .section-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: clamp(1.75rem, 4vw, 2.5rem); line-height: 1.15; letter-spacing: -0.02em; }
+        /* GRID RESPONSIVE */
+        .grid-2 { display: grid; grid-template-columns: 1fr; gap: 2rem; }
+        @media (min-width: 768px) { .grid-2 { grid-template-columns: 1fr 1fr; gap: 3.5rem; align-items: center; } }
 
-        .dot-grid { position: absolute; inset: 0; background-image: radial-gradient(circle, currentColor 1px, transparent 1px); background-size: 28px 28px; opacity: 0.045; pointer-events: none; }
+        .grid-skills { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media (max-width: 480px) { .grid-skills { grid-template-columns: 1fr; } }
 
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
-        .fade-up { animation: fadeUp 0.7s ease forwards; }
-        .fade-up-1 { animation-delay: 0.1s; opacity: 0; }
-        .fade-up-2 { animation-delay: 0.25s; opacity: 0; }
-        .fade-up-3 { animation-delay: 0.4s; opacity: 0; }
-        .fade-up-4 { animation-delay: 0.55s; opacity: 0; }
+        .grid-projects { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+        @media (min-width: 600px) { .grid-projects { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); } }
 
-        @media (max-width: 768px) {
-          .mobile-menu { position: fixed; top: 64px; left: 0; right: 0; padding: 1.5rem; z-index: 99; display: flex; flex-direction: column; gap: 1rem; }
-          .hide-mobile { display: none !important; }
+        .form-row { display: grid; grid-template-columns: 1fr; gap: 1rem; }
+        @media (min-width: 500px) { .form-row { grid-template-columns: 1fr 1fr; } }
+
+        /* HERO */
+        .hero-name { font-family: 'Syne', sans-serif; font-weight: 800; line-height: 1.05; letter-spacing: -.03em; font-size: clamp(2.8rem, 12vw, 5.5rem); }
+
+        /* MOBILE NAV */
+        .hamburger { background: none; border: none; cursor: pointer; font-size: 1.4rem; display: none; }
+        .mobile-nav { display: none; }
+        @media (max-width: 767px) {
+          .nav-links { display: none; }
+          .hamburger { display: block; }
+          .mobile-nav.open { display: flex; flex-direction: column; gap: 1rem; position: fixed; top: 60px; left: 0; right: 0; padding: 1.5rem 1.25rem; z-index: 99; border-bottom-width: 1px; border-bottom-style: solid; backdrop-filter: blur(12px); }
         }
-        @media (min-width: 769px) {
-          .show-desktop { display: flex !important; }
-          .hamburger { display: none !important; }
-          .mobile-menu { display: none !important; }
-        }
+
+        /* STATS */
+        .stats { display: flex; gap: 2rem; flex-wrap: wrap; margin-top: 2.5rem; }
+
+        /* CONTACT LINKS */
+        .contact-links { display: flex; justify-content: center; gap: 1.5rem; margin-top: 2.5rem; flex-wrap: wrap; }
+
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .fu1 { animation: fadeUp .6s .1s ease both; }
+        .fu2 { animation: fadeUp .6s .25s ease both; }
+        .fu3 { animation: fadeUp .6s .4s ease both; }
+        .fu4 { animation: fadeUp .6s .55s ease both; }
       `}</style>
 
       {/* NAV */}
-      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, background: theme.navBg, backdropFilter: "blur(12px)", borderBottom: `1px solid ${theme.border}`, transition: "all 0.3s" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 1.5rem", height: 64, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: "1.1rem", letterSpacing: "-0.02em", color: theme.accent }}>
-            AR<span style={{ color: theme.text }}>.</span>
-          </span>
-          <div className="show-desktop" style={{ display: "none", gap: "2rem", alignItems: "center" }}>
-            {["Inicio", "Sobre mí", "Proyectos", "Habilidades", "Contacto"].map(link => (
-              <span key={link} className={`nav-link${active === link ? " active" : ""}`} style={{ color: active === link ? theme.accent : theme.textMuted }} onClick={() => scrollTo(link)}>
-                {link}
-              </span>
-            ))}
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-            <button className="toggle-btn" onClick={() => setDark(!dark)} style={{ background: dark ? "#2563eb" : "#d1d5db" }} title="Cambiar tema">
-              <div className="toggle-thumb" style={{ left: dark ? "25px" : "3px" }} />
-            </button>
-            <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)} style={{ background: "none", border: "none", cursor: "pointer", color: theme.text, fontSize: "1.4rem" }}>
-              {menuOpen ? "✕" : "☰"}
-            </button>
-          </div>
+      <nav style={{ background: t.nav, borderColor: t.border }}>
+        <span className="syne" style={{ fontWeight: 800, fontSize: "1.1rem", color: t.accent, letterSpacing: "-.02em" }}>
+          AR<span style={{ color: t.text }}>.</span>
+        </span>
+        <div className="nav-links">
+          {["Inicio", "Sobre mí", "Proyectos", "Habilidades", "Contacto"].map(l => (
+            <span key={l} className="nav-link" style={{ color: t.muted }} onClick={() => scrollTo(l)}
+              onMouseOver={e => e.target.style.color = t.accent} onMouseOut={e => e.target.style.color = t.muted}>{l}</span>
+          ))}
         </div>
-        {menuOpen && (
-          <div className="mobile-menu" style={{ background: theme.navBg, borderBottom: `1px solid ${theme.border}` }}>
-            {["Inicio", "Sobre mí", "Proyectos", "Habilidades", "Contacto"].map(link => (
-              <span key={link} onClick={() => scrollTo(link)} style={{ color: active === link ? theme.accent : theme.text, fontWeight: 500, fontSize: "1rem", cursor: "pointer", padding: "0.5rem 0" }}>
-                {link}
-              </span>
-            ))}
-          </div>
-        )}
+        <div style={{ display: "flex", alignItems: "center", gap: ".75rem" }}>
+          <button onClick={() => setDark(!dark)} style={{ width: 44, height: 24, borderRadius: 999, border: "none", cursor: "pointer", background: dark ? "#2563eb" : "#d1d5db", position: "relative", transition: "background .3s", flexShrink: 0 }}>
+            <div style={{ position: "absolute", top: 2, left: dark ? 22 : 2, width: 20, height: 20, borderRadius: "50%", background: "white", transition: "left .3s", boxShadow: "0 1px 4px rgba(0,0,0,.2)" }} />
+          </button>
+          <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)} style={{ color: t.text }}>{menuOpen ? "✕" : "☰"}</button>
+        </div>
       </nav>
 
+      {/* MOBILE MENU */}
+      <div className={`mobile-nav ${menuOpen ? "open" : ""}`} style={{ background: t.nav, borderColor: t.border }}>
+        {["Inicio", "Sobre mí", "Proyectos", "Habilidades", "Contacto"].map(l => (
+          <span key={l} onClick={() => scrollTo(l)} style={{ color: t.text, fontWeight: 500, fontSize: "1rem", cursor: "pointer", padding: ".4rem 0" }}>{l}</span>
+        ))}
+      </div>
+
       {/* HERO */}
-      <section id="Inicio" style={{ minHeight: "100vh", display: "flex", alignItems: "center", position: "relative", overflow: "hidden", paddingTop: 64 }}>
-        <div className="dot-grid" style={{ color: theme.text }} />
-        <div style={{ position: "absolute", top: "15%", right: "-5%", width: "45vw", height: "45vw", maxWidth: 600, maxHeight: 600, borderRadius: "50%", background: "radial-gradient(circle, rgba(37,99,235,0.12) 0%, transparent 70%)", pointerEvents: "none" }} />
-        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 1.5rem", width: "100%" }}>
-          <p className="fade-up fade-up-1 section-label">Fullstack Developer · Santo Domingo, RD</p>
-          <h1 className="fade-up fade-up-2 hero-name" style={{ fontSize: "clamp(3rem, 8vw, 6rem)", color: theme.text, marginBottom: "1.25rem", maxWidth: 800 }}>
-            Alam<br />
-            <span style={{ color: theme.accent }}>Rosario</span><span style={{ color: theme.textMuted }}>.</span>
+      <section id="Inicio" style={{ minHeight: "100vh", display: "flex", alignItems: "center", paddingTop: 60, position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", top: "10%", right: "-10%", width: "60vw", maxWidth: 500, aspectRatio: "1", borderRadius: "50%", background: "radial-gradient(circle, rgba(37,99,235,.1) 0%, transparent 70%)", pointerEvents: "none" }} />
+        <div className="container" style={{ padding: "4rem 1.25rem" }}>
+          <p className="label fu1">Fullstack Developer · Santo Domingo, RD</p>
+          <h1 className="hero-name fu2" style={{ color: t.text, margin: ".5rem 0 1rem" }}>
+            Alam<br /><span style={{ color: t.accent }}>Rosario</span><span style={{ color: t.muted }}>.</span>
           </h1>
-          <p className="fade-up fade-up-3" style={{ fontSize: "clamp(1rem, 2vw, 1.2rem)", color: theme.textMuted, maxWidth: 560, lineHeight: 1.7, marginBottom: "2.5rem" }}>
+          <p className="fu3" style={{ color: t.muted, fontSize: "clamp(.9rem, 2.5vw, 1.1rem)", lineHeight: 1.75, maxWidth: 520, marginBottom: "2rem" }}>
             Ingeniero en Sistemas especializado en aplicaciones web fullstack. Diseño, desarrollo y despliego soluciones reales — de la arquitectura al servidor de producción.
           </p>
-          <div className="fade-up fade-up-4" style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-            <button className="btn-primary" onClick={() => scrollTo("Proyectos")}>Ver proyectos →</button>
-            <button className="btn-outline" onClick={() => scrollTo("Contacto")}>Contáctame</button>
+          <div className="fu4" style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+            <button className="btn-p" onClick={() => scrollTo("Proyectos")}>Ver proyectos →</button>
+            <button className="btn-o" onClick={() => scrollTo("Contacto")}>Contáctame</button>
           </div>
-          <div style={{ display: "flex", gap: "2.5rem", marginTop: "3.5rem", flexWrap: "wrap" }}>
+          <div className="stats">
             {[["3+", "años de experiencia"], ["1", "proyecto en producción"], ["10", "meses Talendig '26"]].map(([n, l]) => (
               <div key={n}>
-                <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: "2rem", color: theme.accent }}>{n}</div>
-                <div style={{ fontSize: "0.8rem", color: theme.textMuted, marginTop: "0.15rem" }}>{l}</div>
+                <div className="syne" style={{ fontWeight: 800, fontSize: "2rem", color: t.accent }}>{n}</div>
+                <div style={{ fontSize: ".8rem", color: t.muted, marginTop: ".1rem" }}>{l}</div>
               </div>
             ))}
           </div>
@@ -169,105 +178,117 @@ export default function Portfolio() {
       </section>
 
       {/* SOBRE MÍ */}
-      <section id="Sobre mí" style={{ padding: "7rem 1.5rem" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4rem", alignItems: "center" }}>
-          <div>
-            <p className="section-label">Quién soy</p>
-            <h2 className="section-title" style={{ color: theme.text, marginBottom: "1.5rem" }}>Desarrollador con visión de producto</h2>
-            <p style={{ color: theme.textMuted, lineHeight: 1.8, marginBottom: "1.25rem", fontSize: "0.95rem" }}>
-              Ingeniero en Sistemas de Computación (UNAPEC, 2026) con enfoque en el ciclo completo de desarrollo — desde el diseño de arquitectura hasta el despliegue en producción. Trabajo como freelancer construyendo soluciones reales para clientes reales.
-            </p>
-            <p style={{ color: theme.textMuted, lineHeight: 1.8, fontSize: "0.95rem" }}>
-              Actualmente cursando la Carrera Técnica en Desarrollo de Software (Talendig) para profundizar en infraestructura cloud, Docker y DevOps. Meta: expandirme al mercado internacional.
-            </p>
-            <div style={{ display: "flex", gap: "1rem", marginTop: "2rem", flexWrap: "wrap" }}>
-              <a href="https://github.com/AlamRosario" target="_blank" rel="noreferrer" style={{ textDecoration: "none" }}>
-                <button className="btn-primary">GitHub ↗</button>
-              </a>
-              <a href="mailto:alamsanchez05@gmail.com" style={{ textDecoration: "none" }}>
-                <button className="btn-outline">Email</button>
-              </a>
-            </div>
-          </div>
-          <div>
-            <div style={{ width: "100%", aspectRatio: "1", maxWidth: 360, margin: "0 auto", borderRadius: 20, background: theme.bgCardAlt, border: `2px dashed ${theme.border}`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "0.75rem" }}>
-              <div style={{ fontSize: "3rem", opacity: 0.3 }}>👤</div>
-              <p style={{ color: theme.textMuted, fontSize: "0.85rem" }}>Foto de perfil</p>
-            </div>
-            <div style={{ marginTop: "1.5rem", background: theme.bgCard, borderRadius: 14, padding: "1.25rem 1.5rem", border: `1px solid ${theme.border}` }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                <div>
-                  <p style={{ fontWeight: 600, fontSize: "0.9rem", color: theme.text }}>Ingeniería en Sistemas de Computación</p>
-                  <p style={{ color: theme.textMuted, fontSize: "0.82rem", marginTop: "0.2rem" }}>Universidad APEC (UNAPEC)</p>
-                </div>
-                <span style={{ background: theme.accentSoft, color: theme.accentText, fontSize: "0.75rem", fontWeight: 600, padding: "0.25rem 0.6rem", borderRadius: 6 }}>2026</span>
+      <section id="Sobre mí" style={{ padding: "5rem 0" }}>
+        <div className="container">
+          <div className="grid-2">
+            <div>
+              <span className="label">Quién soy</span>
+              <h2 className="syne" style={{ fontWeight: 700, fontSize: "clamp(1.6rem, 4vw, 2.2rem)", color: t.text, margin: ".4rem 0 1.25rem", lineHeight: 1.2 }}>Desarrollador con visión de producto</h2>
+              <p style={{ color: t.muted, lineHeight: 1.8, marginBottom: "1rem", fontSize: ".93rem" }}>
+                Ingeniero en Sistemas de Computación (UNAPEC, 2026) con enfoque en el ciclo completo de desarrollo — desde el diseño de arquitectura hasta el despliegue en producción. Trabajo como freelancer construyendo soluciones reales para clientes reales.
+              </p>
+              <p style={{ color: t.muted, lineHeight: 1.8, fontSize: ".93rem", marginBottom: "1.75rem" }}>
+                Actualmente cursando la Carrera Técnica en Desarrollo de Software (Talendig) para profundizar en infraestructura cloud, Docker y DevOps. Meta: expandirme al mercado internacional.
+              </p>
+              <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
+                <a href="https://github.com/AlamRosario" target="_blank" rel="noreferrer" style={{ textDecoration: "none" }}>
+                  <button className="btn-p">GitHub ↗</button>
+                </a>
+                <a href="mailto:alamsanchez05@gmail.com" style={{ textDecoration: "none" }}>
+                  <button className="btn-o">Email</button>
+                </a>
               </div>
-              <p style={{ color: theme.textMuted, fontSize: "0.8rem", marginTop: "0.6rem" }}>Índice 3.01 / 4.0 · 157 créditos aprobados</p>
+            </div>
+            <div>
+              <img src={profileImg} alt="Alam Rosario" style={{ width: "100%", maxWidth: 340, borderRadius: 20, display: "block", margin: "0 auto 1.5rem", objectFit: "cover" }} />
+              <div style={{ background: t.bgCard, borderRadius: 14, padding: "1.25rem", border: `1px solid ${t.border}` }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: ".5rem" }}>
+                  <div>
+                    <p style={{ fontWeight: 600, fontSize: ".88rem", color: t.text }}>Ingeniería en Sistemas de Computación</p>
+                    <p style={{ color: t.muted, fontSize: ".8rem", marginTop: ".2rem" }}>Universidad APEC (UNAPEC)</p>
+                  </div>
+                  <span style={{ background: t.accentSoft, color: t.accentText, fontSize: ".72rem", fontWeight: 700, padding: ".2rem .6rem", borderRadius: 6 }}>2026</span>
+                </div>
+                <p style={{ color: t.muted, fontSize: ".78rem", marginTop: ".6rem" }}>Índice 3.01 / 4.0 · 157 créditos aprobados</p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* PROYECTOS */}
-      <section id="Proyectos" style={{ padding: "7rem 1.5rem", background: dark ? "#0c0c10" : "#eeecea" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-          <p className="section-label">Lo que he construido</p>
-          <h2 className="section-title" style={{ color: theme.text, marginBottom: "3rem" }}>Proyectos destacados</h2>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1.5rem" }}>
-            <div className="card" style={{ background: theme.bgCard, border: `1px solid ${theme.border}`, padding: "2rem" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1rem" }}>
-                <div style={{ width: 44, height: 44, borderRadius: 12, background: theme.accentSoft, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.3rem" }}>🏦</div>
-                <span style={{ background: "#dcfce7", color: "#166534", fontSize: "0.72rem", fontWeight: 600, padding: "0.2rem 0.6rem", borderRadius: 6 }}>En Producción</span>
+      <section id="Proyectos" style={{ padding: "5rem 0", background: t.bgAlt }}>
+        <div className="container">
+          <span className="label">Lo que he construido</span>
+          <h2 className="syne" style={{ fontWeight: 700, fontSize: "clamp(1.6rem, 4vw, 2.2rem)", color: t.text, margin: ".4rem 0 2.5rem", lineHeight: 1.2 }}>Proyectos destacados</h2>
+          <div className="grid-projects">
+            <div className="card" style={{ background: t.bgCard, border: `1px solid ${t.border}`, padding: "1.75rem" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1rem", flexWrap: "wrap", gap: ".5rem" }}>
+                <div style={{ width: 44, height: 44, borderRadius: 12, background: t.accentSoft, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.3rem" }}>🏦</div>
+                <span style={{ background: "#dcfce7", color: "#166534", fontSize: ".72rem", fontWeight: 700, padding: ".2rem .6rem", borderRadius: 6 }}>En Producción</span>
               </div>
-              <h3 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: "1.2rem", color: theme.text, marginBottom: "0.75rem" }}>COOPEMAO v2</h3>
-              <p style={{ color: theme.textMuted, fontSize: "0.88rem", lineHeight: 1.7, marginBottom: "1.25rem" }}>
+              <h3 className="syne" style={{ fontWeight: 700, fontSize: "1.15rem", color: t.text, marginBottom: ".65rem" }}>COOPEMAO v2</h3>
+              <p style={{ color: t.muted, fontSize: ".87rem", lineHeight: 1.7, marginBottom: "1.25rem" }}>
                 Plataforma fullstack que digitalizó la gestión de una cooperativa real. Módulos de préstamos, ahorros SAN, panel administrativo con autenticación y monitoreo en tiempo real.
               </p>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginBottom: "1.5rem" }}>
-                {["React", "Node.js", "PostgreSQL", "Vercel", "Railway"].map(t => (
-                  <span key={t} className="skill-tag" style={{ background: theme.accentSoft, color: theme.accentText }}>{t}</span>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: ".4rem", marginBottom: "1.5rem" }}>
+                {["React", "Node.js", "PostgreSQL", "Vercel", "Railway"].map(t2 => (
+                  <span key={t2} className="tag" style={{ background: t.accentSoft, color: t.accentText }}>{t2}</span>
                 ))}
               </div>
-              <a href="https://manosalaobracoop.com.do" target="_blank" rel="noreferrer" style={{ textDecoration: "none" }}>
-                <button className="btn-primary" style={{ width: "100%", justifyContent: "center" }}>Ver sitio en vivo ↗</button>
+              <a href="https://manosalaobracoop.com.do" target="_blank" rel="noreferrer" style={{ textDecoration: "none", display: "block" }}>
+                <button className="btn-p" style={{ width: "100%" }}>Ver sitio en vivo ↗</button>
               </a>
             </div>
-            <div className="card" style={{ background: theme.bgCard, border: `2px dashed ${theme.border}`, padding: "2rem", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: 320, textAlign: "center" }}>
-              <div style={{ fontSize: "2.5rem", marginBottom: "1rem", opacity: 0.4 }}>🚀</div>
-              <p style={{ color: theme.textMuted, fontSize: "0.9rem", fontWeight: 500 }}>Próximo proyecto</p>
-              <p style={{ color: theme.textMuted, fontSize: "0.8rem", marginTop: "0.5rem", opacity: 0.7 }}>En desarrollo…</p>
+            <div className="card" style={{ background: t.bgCard, border: `1px solid ${t.border}`, padding: "1.75rem" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1rem", flexWrap: "wrap", gap: ".5rem" }}>
+                <div style={{ width: 44, height: 44, borderRadius: 12, background: t.accentSoft, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.3rem" }}>🏫</div>
+                <span style={{ background: "#dcfce7", color: "#166534", fontSize: ".72rem", fontWeight: 700, padding: ".2rem .6rem", borderRadius: 6 }}>En Producción</span>
+              </div>
+              <h3 className="syne" style={{ fontWeight: 700, fontSize: "1.15rem", color: t.text, marginBottom: ".65rem" }}>Centro Educativo El Privilegio</h3>
+              <p style={{ color: t.muted, fontSize: ".87rem", lineHeight: 1.7, marginBottom: "1.25rem" }}>
+                Sitio web institucional para centro educativo en Santo Domingo Este. Diseño moderno, responsive y optimizado para presentar la oferta académica de nivel inicial y primario.
+              </p>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: ".4rem", marginBottom: "1.5rem" }}>
+                {["React", "EmailJS", "Google Maps", "Vercel"].map(t2 => (
+                  <span key={t2} className="tag" style={{ background: t.accentSoft, color: t.accentText }}>{t2}</span>
+                ))}
+              </div>
+              <a href="https://www.elprivilegio.edu.do/" target="_blank" rel="noreferrer" style={{ textDecoration: "none", display: "block" }}>
+                <button className="btn-p" style={{ width: "100%" }}>Ver sitio en vivo ↗</button>
+              </a>
             </div>
           </div>
         </div>
       </section>
 
       {/* HABILIDADES */}
-      <section id="Habilidades" style={{ padding: "7rem 1.5rem" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-          <p className="section-label">Stack técnico</p>
-          <h2 className="section-title" style={{ color: theme.text, marginBottom: "3rem" }}>Habilidades</h2>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1.5rem", marginBottom: "4rem" }}>
+      <section id="Habilidades" style={{ padding: "5rem 0" }}>
+        <div className="container">
+          <span className="label">Stack técnico</span>
+          <h2 className="syne" style={{ fontWeight: 700, fontSize: "clamp(1.6rem, 4vw, 2.2rem)", color: t.text, margin: ".4rem 0 2.5rem", lineHeight: 1.2 }}>Habilidades</h2>
+          <div className="grid-skills" style={{ marginBottom: "3.5rem" }}>
             {Object.entries(SKILLS).map(([cat, skills]) => (
-              <div key={cat} style={{ background: theme.bgCard, borderRadius: 16, padding: "1.5rem", border: `1px solid ${theme.border}` }}>
-                <p style={{ fontWeight: 700, fontSize: "0.85rem", color: theme.accent, letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: "1rem" }}>{cat}</p>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+              <div key={cat} style={{ background: t.bgCard, borderRadius: 16, padding: "1.25rem", border: `1px solid ${t.border}` }}>
+                <p style={{ fontWeight: 700, fontSize: ".78rem", color: t.accent, letterSpacing: ".06em", textTransform: "uppercase", marginBottom: ".85rem" }}>{cat}</p>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: ".4rem" }}>
                   {skills.map(s => (
-                    <span key={s} className="skill-tag" style={{ background: theme.bgCardAlt, color: theme.text, border: `1px solid ${theme.border}` }}>{s}</span>
+                    <span key={s} className="tag" style={{ background: t.bgCardAlt, color: t.text, border: `1px solid ${t.border}` }}>{s}</span>
                   ))}
                 </div>
               </div>
             ))}
           </div>
-          <p className="section-label">Formación continua</p>
-          <h3 style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: "1.5rem", color: theme.text, marginBottom: "1.5rem" }}>Certificaciones</h3>
-          <div style={{ display: "grid", gap: "0.75rem" }}>
+          <span className="label">Formación continua</span>
+          <h3 className="syne" style={{ fontWeight: 700, fontSize: "1.4rem", color: t.text, margin: ".4rem 0 1.25rem" }}>Certificaciones</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: ".65rem" }}>
             {CERTS.map((c, i) => (
-              <div key={i} style={{ background: theme.bgCard, borderRadius: 12, padding: "1rem 1.5rem", border: `1px solid ${theme.border}`, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.5rem" }}>
+              <div key={i} style={{ background: t.bgCard, borderRadius: 12, padding: "1rem 1.25rem", border: `1px solid ${t.border}`, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: ".5rem" }}>
                 <div>
-                  <p style={{ fontWeight: 600, fontSize: "0.9rem", color: theme.text }}>{c.name}</p>
-                  <p style={{ color: theme.textMuted, fontSize: "0.8rem", marginTop: "0.15rem" }}>{c.org}{c.hours ? ` · ${c.hours}` : ""}</p>
+                  <p style={{ fontWeight: 600, fontSize: ".88rem", color: t.text }}>{c.name}</p>
+                  <p style={{ color: t.muted, fontSize: ".78rem", marginTop: ".15rem" }}>{c.org}{c.hours ? ` · ${c.hours}` : ""}</p>
                 </div>
-                <span style={{ background: theme.accentSoft, color: theme.accentText, fontSize: "0.75rem", fontWeight: 600, padding: "0.25rem 0.65rem", borderRadius: 6, whiteSpace: "nowrap" }}>{c.year}</span>
+                <span style={{ background: t.accentSoft, color: t.accentText, fontSize: ".72rem", fontWeight: 700, padding: ".2rem .6rem", borderRadius: 6, whiteSpace: "nowrap" }}>{c.year}</span>
               </div>
             ))}
           </div>
@@ -275,48 +296,48 @@ export default function Portfolio() {
       </section>
 
       {/* CONTACTO */}
-      <section id="Contacto" style={{ padding: "7rem 1.5rem", background: dark ? "#0c0c10" : "#eeecea" }}>
-        <div style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
-          <p className="section-label">Hablemos</p>
-          <h2 className="section-title" style={{ color: theme.text, marginBottom: "1rem" }}>¿Tienes un proyecto?</h2>
-          <p style={{ color: theme.textMuted, fontSize: "0.95rem", lineHeight: 1.7, marginBottom: "3rem" }}>
-            Estoy disponible para proyectos freelance. Escríbeme y hablamos.
-          </p>
-          {!sent ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "left" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                <input className="input-field" placeholder="Tu nombre" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })}
-                  style={{ background: theme.bgCard, border: `1.5px solid ${theme.border}`, color: theme.text }} />
-                <input className="input-field" placeholder="Tu email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })}
-                  style={{ background: theme.bgCard, border: `1.5px solid ${theme.border}`, color: theme.text }} />
+      <section id="Contacto" style={{ padding: "5rem 0", background: t.bgAlt }}>
+        <div className="container">
+          <div style={{ maxWidth: 640, margin: "0 auto", textAlign: "center" }}>
+            <span className="label">Hablemos</span>
+            <h2 className="syne" style={{ fontWeight: 700, fontSize: "clamp(1.6rem, 4vw, 2.2rem)", color: t.text, margin: ".4rem 0 .75rem", lineHeight: 1.2 }}>¿Tienes un proyecto?</h2>
+            <p style={{ color: t.muted, fontSize: ".93rem", lineHeight: 1.7, marginBottom: "2.5rem" }}>Estoy disponible para proyectos freelance. Escríbeme y hablamos.</p>
+            {!sent ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: "1rem", textAlign: "left" }}>
+                <div className="form-row">
+                  <input className="input" placeholder="Tu nombre" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })}
+                    style={{ background: t.bgCard, border: `1.5px solid ${t.border}`, color: t.text }} />
+                  <input className="input" placeholder="Tu email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })}
+                    style={{ background: t.bgCard, border: `1.5px solid ${t.border}`, color: t.text }} />
+                </div>
+                <textarea className="input" placeholder="Cuéntame sobre tu proyecto…" rows={5} value={formData.message} onChange={e => setFormData({ ...formData, message: e.target.value })}
+                  style={{ background: t.bgCard, border: `1.5px solid ${t.border}`, color: t.text, resize: "vertical" }} />
+                <button className="btn-p" onClick={handleSubmit} style={{ alignSelf: "flex-end" }}>Enviar mensaje →</button>
               </div>
-              <textarea className="input-field" placeholder="Cuéntame sobre tu proyecto…" rows={5} value={formData.message} onChange={e => setFormData({ ...formData, message: e.target.value })}
-                style={{ background: theme.bgCard, border: `1.5px solid ${theme.border}`, color: theme.text, resize: "vertical" }} />
-              <button className="btn-primary" onClick={handleSubmit} style={{ alignSelf: "flex-end" }}>Enviar mensaje →</button>
+            ) : (
+              <div style={{ background: t.bgCard, borderRadius: 16, padding: "3rem", border: `1px solid ${t.border}` }}>
+                <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>✅</div>
+                <p style={{ fontWeight: 600, color: t.text, fontSize: "1.05rem" }}>¡Mensaje recibido!</p>
+                <p style={{ color: t.muted, marginTop: ".5rem", fontSize: ".88rem" }}>Me pondré en contacto contigo pronto.</p>
+              </div>
+            )}
+            <div className="contact-links">
+              {[["📧", "alamsanchez05@gmail.com", "mailto:alamsanchez05@gmail.com"], ["📱", "829-927-3441", "tel:+18299273441"], ["🐙", "github.com/AlamRosario", "https://github.com/AlamRosario"]].map(([icon, label, href]) => (
+                <a key={label} href={href} target="_blank" rel="noreferrer"
+                  style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: ".4rem", color: t.muted, fontSize: ".82rem", transition: "color .2s" }}
+                  onMouseOver={e => e.currentTarget.style.color = t.accent}
+                  onMouseOut={e => e.currentTarget.style.color = t.muted}>
+                  <span>{icon}</span><span>{label}</span>
+                </a>
+              ))}
             </div>
-          ) : (
-            <div style={{ background: theme.bgCard, borderRadius: 16, padding: "3rem", border: `1px solid ${theme.border}` }}>
-              <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>✅</div>
-              <p style={{ fontWeight: 600, color: theme.text, fontSize: "1.1rem" }}>¡Mensaje recibido!</p>
-              <p style={{ color: theme.textMuted, marginTop: "0.5rem", fontSize: "0.9rem" }}>Me pondré en contacto contigo pronto.</p>
-            </div>
-          )}
-          <div style={{ display: "flex", justifyContent: "center", gap: "2rem", marginTop: "3rem", flexWrap: "wrap" }}>
-            {[["📧", "alamsanchez05@gmail.com", "mailto:alamsanchez05@gmail.com"], ["📱", "829-927-3441", "tel:+18299273441"], ["🐙", "github.com/AlamRosario", "https://github.com/AlamRosario"]].map(([icon, label, href]) => (
-              <a key={label} href={href} target="_blank" rel="noreferrer" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "0.5rem", color: theme.textMuted, fontSize: "0.85rem", transition: "color 0.2s" }}
-                onMouseOver={e => e.currentTarget.style.color = theme.accent} onMouseOut={e => e.currentTarget.style.color = theme.textMuted}>
-                <span>{icon}</span><span>{label}</span>
-              </a>
-            ))}
           </div>
         </div>
       </section>
 
       {/* FOOTER */}
-      <footer style={{ borderTop: `1px solid ${theme.border}`, padding: "2rem 1.5rem", textAlign: "center" }}>
-        <p style={{ color: theme.textMuted, fontSize: "0.82rem" }}>
-          © 2026 Alam Rosario · Diseñado y desarrollado con React
-        </p>
+      <footer style={{ borderTop: `1px solid ${t.border}`, padding: "1.75rem 1.25rem", textAlign: "center" }}>
+        <p style={{ color: t.muted, fontSize: ".8rem" }}>© 2026 Alam Rosario · Diseñado y desarrollado con React</p>
       </footer>
     </div>
   );
